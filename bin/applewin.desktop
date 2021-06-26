@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=AppleWin
+Exec=/home/bill/git/apple-ii-dev/bin/applewin
+Type=Application
+StartupNotify=true
+Comment=Apple ][e Emulator for Windows
+Path=/home/bill/git/apple-ii-dev
+Icon=/home/bill/git/apple-ii-dev/lib/applewin.ico

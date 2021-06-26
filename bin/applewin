@@ -1,0 +1,43 @@
+#!/bin/sh
+
+#RAMWORKS_8MB='-R 127'
+TARGET=applewin.exe
+FOUND=false
+SEARCHED_DIRS=""
+STATUS_FILE=`mktemp`
+unset APPLEWIN
+
+echo in_progress > "$STATUS_FILE"
+
+for SEARCH_DIR in "$HOME"/Dropbox/opt "$HOME"/.wine/drive_c/opt
+do
+    if [ -d "$SEARCH_DIR" ]
+    then
+        find "$SEARCH_DIR" -iname "$TARGET" -print | sort -r | while read APPLEWIN
+		do
+		    echo Starting $APPLEWIN...
+		    if wine "$APPLEWIN" $RAMWORKS_8MB "$@"
+		    then
+			echo success > "$STATUS_FILE"
+		    fi
+
+		    # Breaks out of the inner "while" loop,
+		    # but not the outer "for" loop
+		    break
+		done
+	
+    else
+        echo Search directory not found or not a directory: $SEARCH_DIR
+    fi
+    SEARCHED_DIRS="$SEARCHED_DIRS $SEARCH_DIR"
+done
+
+RESULT=`cat "$STATUS_FILE"`
+rm "$STATUS_FILE"
+
+if [ "$RESULT" != "success" ]
+then
+    echo $TARGET was not found under these directories: $SEARCHED_DIRS
+    exit 1
+fi
+

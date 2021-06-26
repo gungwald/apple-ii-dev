@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="BeagleWriteP8">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/var/apple2/fd/word-processing/BeagleWriteP8.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

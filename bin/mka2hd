@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# This script depends on another shell script named acmdr
+# which runs AppleCommander. It should contain something like this:
+# 
+#   #!/bin/sh
+#   exec java -jar $HOME/lib/AppleCommander-1.3.5.14-ac.jar "$@"
+#
+# We really do want to call it as a separate script rather than
+# reproduce the java startup code here because otherwise it would
+# need to be updated in multiple places.
+
+bin_dir=`dirname "$0"`
+if [ "$bin_dir" = '.' ]
+then
+	bin_dir=`pwd`
+fi
+top_dir=`dirname "$bin_dir"`
+acmdr="$bin_dir"/acmdr
+
+PRODOS_MASTER="$top_dir"/apple2/fd/prodos-8-4.0.2-system.dsk
+
+if [ $# > 0 ]
+then
+	for DISK in "$@"
+	do
+		# Copy OS files from master to new disk. Looses the file dates!
+		$ac -g "$PRODOS_MASTER" PRODOS | $ac -p $DISK PRODOS SYS 0X0000
+		$ac -g "$PRODOS_MASTER" BASIC.SYSTEM  | $ac -p $DISK BASIC.SYSTEM SYS 0X2000
+	done
+else
+	echo You did not specify a file name for the hard disk image, dumb ass.
+fi
+

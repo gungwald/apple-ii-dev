@@ -1,0 +1,20 @@
+#!/bin/sh
+
+DISK=samples
+CC65_HOME=/usr/local
+
+if [ ! -f $DISK.po ]; then
+    rm $DISK.po
+fi
+
+aplnewfd $DISK
+
+aplcmdr -p $DISK.po a2e.stdmou.mou BIN < ../mou/a2e.stdmou.mou
+aplcmdr -p $DISK.po a2e.hi.tgi BIN < ../tgi/a2e.hi.tgi
+
+for PGM in ascii diodemo enumdevdir hello mandelbrot mousetest sieve tgidemo; do
+    if [ -f $PGM ]; then
+        aplcmdr -cc65 $DISK.po $PGM BIN < $PGM
+    fi
+done
+

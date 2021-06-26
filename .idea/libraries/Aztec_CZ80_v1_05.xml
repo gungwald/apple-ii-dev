@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Aztec CZ80_v1.05">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/var/apple2/fd/CPM/Aztec CZ80_v1.05.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

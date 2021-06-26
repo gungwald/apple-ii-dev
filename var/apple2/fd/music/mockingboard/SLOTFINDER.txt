@@ -1,0 +1,117 @@
+                1    
+                2                                   ; LST OFF
+                3                  ORG    $0300     
+                4                  CYC
+                5    
+                6    ********************************
+                7    *                              *
+                8    * SLOTFINDER FOR MOCKINGBOARD  *
+                9    *   using VIA R6522 timers     *
+                10   * (C) 1984 Sweet Micro Systems *
+                11   *    (S)ource by DECKARD       *
+                12   *                              *
+                13   ********************************
+                14   
+                15   * From VIA datasheet:
+                16   *
+                17   * There are 2 independant 16-bit counter/timers (called
+                18   * Timer 1 and Timer 2) in the 6522.
+                19   * Interval Timer T1 consists of 2 8-bit latches and
+                20   * a 16-bit counter. The latches store data which is to
+                21   * be loaded into the counter.
+                22   * "the interrupt flag can be cleared by reading T1C-L".
+                23   * "the contents of the low order latch will be transferred
+                24   * into the low order counter, and the timer will begin to
+                25   * DECREMENT at system clock rate".
+                26   *
+                27   * SLOTFINDER documentation:
+                28   *
+                29   * This is a short machine language routine that searches
+                30   * through the Apple's slots for a Mockingboard.
+                31   * To use, either BRUN SLOTFINDER, or BLOAD it and
+                32   * CALL 768.
+                33   * When the routine returns, it will set a flag at
+                34   * location 208 ($D0) to indicate the presence or absence
+                35   * of Mockingboard. If the flag is not equal to zero, then
+                36   * Mockingboard is in the computer properly.
+                37   * Location 211 ($D3) will hold the hi byte of the
+                38   * slot's address ($Cn; n=slot #).
+                39   * To get a single digit slot number for BASIC, just
+                40   * substract 192 from this value.
+                41   
+                42   MB_PRESENCE   EQU    $D0       ; 0=MB not found / 1=MB found
+                43   MB_READ2      EQU    $D1       ; 2nd read operation
+                44   MB_ADDR       EQU    $D2       ; low addr ($00=via1 / $80=via2)
+                45   MB_SLOT       EQU    $D3       ; $Cn where n=slot number
+                46   
+                47   T1CL          =      4         ; read/write counter low Timer 1 (R4)
+                48   
+                49   *-------------------------------
+                50   
+0300: A9 00     51                 LDA    #$00      ; init                                      2 ,0002
+0302: 85 D0     52                 STA    MB_PRESENCE ; presence status                         3 ,0005
+0304: 85 D2     53                 STA    MB_ADDR   ; via1 low addr ($Cn00)                     3 ,0008
+                54   
+0306: A9 C1     55                 LDA    #$C1      ; start with slot 1                         2 ,0010
+0308: 85 D3     56                 STA    MB_SLOT                                               3 ,0013
+                57   
+                58   * Check T1 (first VIA of MB card)
+                59   
+030A: A0 04     60                 LDY    #T1CL     ; the program will read T1C-L               2 ,0015
+030C: B1 D2     61   CHECK_SLOT    LDA    (MB_ADDR),Y ; $Cn04 (mapping via1) first read         5',0020
+030E: 48        62                 PHA              ; save it                                   3 ,0023
+030F: B1 D2     63                 LDA    (MB_ADDR),Y ; second read                             5',0028
+0311: 85 D1     64                 STA    MB_READ2  ; store it                                  3 ,0031
+0313: 68        65                 PLA              ; restore first                             4 ,0035
+0314: 38        66                 SEC              ; compare both. Content must be different   2 ,0037
+0315: E5 D1     67                 SBC    MB_READ2  ; if mapped addr is a timer                 3 ,0040
+0317: C9 08     68                 CMP    #8        ; check CYC                                 2 ,0042
+0319: D0 16     69                 BNE    NEXT_SLOT ; mockingboard not here. Check next slot    2',0044
+                70                                  ; T1 found
+                71   
+                72   * Check T1 (second VIA of MB card)
+                73   
+031B: A9 80     74                 LDA    #$80                                                  2 ,0046
+031D: 85 D2     75                 STA    MB_ADDR   ; via2 low addr ($Cn80)                     3 ,0049
+                76   
+031F: B1 D2     77                 LDA    (MB_ADDR),Y ; $Cn84 (mapping via2) first read         5',0054
+0321: 48        78                 PHA              ; save it                                   3 ,0057
+0322: B1 D2     79                 LDA    (MB_ADDR),Y ; second read                             5',0062
+0324: 85 D1     80                 STA    MB_READ2  ; store it                                  3 ,0065
+0326: 68        81                 PLA              ; restore first                             4 ,0069
+0327: 38        82                 SEC              ; compare both. Content must be different   2 ,0071
+0328: E5 D1     83                 SBC    MB_READ2  ; if mapped addr is a timer                 3 ,0074
+032A: C9 08     84                 CMP    #8        ; check CYC                                 2 ,0076
+032C: D0 03     85                 BNE    NEXT_SLOT ; mockingboard not here. Check next slot    2',0078
+                86                                  ; T1 found
+                87   
+032E: E6 D0     88                 INC    MB_PRESENCE ; got it                                  5 ,0083
+0330: 60        89                 RTS                                                          6 ,0089
+                90   
+0331: A9 00     91   NEXT_SLOT     LDA    #$00      ; via1                                      2 ,0091
+0333: 85 D2     92                 STA    MB_ADDR                                               3 ,0094
+0335: E6 D3     93                 INC    MB_SLOT   ; next slot                                 5 ,0099
+0337: A5 D3     94                 LDA    MB_SLOT   ; was last slot?                            3 ,0102
+0339: C9 C8     95                 CMP    #$C8      ; max+1 (check slots 1-7)                   2 ,0104
+033B: D0 CF     96                 BNE    CHECK_SLOT ; no, test the current slot                2',0106
+033D: 60        97                 RTS              ; MB not found                              6 ,0112
+                98   
+                99                 SAV    SLOTFINDER 
+
+Object saved as SLOTFINDER,A$0300,L$003E
+
+
+
+--End assembly, 62 bytes, Errors: 0 
+
+
+Symbol table - alphabetical order:
+
+   CHECK_SLOT   =$030C      MB_ADDR      =$D2        MB_PRESENCE  =$D0        MB_READ2     =$D1
+   MB_SLOT      =$D3        NEXT_SLOT    =$0331      T1CL         =$04     
+
+
+Symbol table - numerical order:
+
+   T1CL         =$04        MB_PRESENCE  =$D0        MB_READ2     =$D1        MB_ADDR      =$D2
+   MB_SLOT      =$D3        CHECK_SLOT   =$030C      NEXT_SLOT    =$0331   

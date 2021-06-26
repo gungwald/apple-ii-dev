@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="TML_Pascal-Manuals">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/docs/apple2/iigs/TML_Pascal-Manuals.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

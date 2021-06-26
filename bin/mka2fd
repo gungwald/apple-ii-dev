@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]
+then
+    echo Enter the name of the new disk: 
+    read DISK_NAME
+else
+    DISK_NAME=$1
+fi
+
+acmdr -pro140 $DISK_NAME.po $DISK_NAME

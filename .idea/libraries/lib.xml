@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/AppleCommander-1.3.5.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/AppleCommander-1.3.5.14.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/AppleCommander-1.3.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/swt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/AppleCommander-1.3.5.14-ac.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

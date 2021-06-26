@@ -1,0 +1,273 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+	<title>MockingBoard Mini-Manual </title>
+	<meta name="GENERATOR" content="Visual Page">
+</head>
+
+<body data-pinterest-extension-installed="ff1.37.9">
+
+<p><font size="5"><b>MockingBoard Mini-Manual </b></font><br>
+<br>
+by Jeff Hurlburt<br>
+EMail:<a href="mailto:rubywand@aol.com">rubywand@aol.com</a><br>
+<br>
+
+</p><hr>
+<br>
+<br>
+<b>Part 1: Kinds of MockingBoards</b><br>
+<br>
+The original MockingBoards come in four basic 'flavors': <br>
+<br>
+Sound I-- produces music tones and a variety of sound <br>
+effects (3 voices to 1 Audio Output)<br>
+Speech I-- produces speech or limited sound effects <br>
+(1 voice output to 1 Audio Output)<br>
+Sound II-- 2 x Sound I on a single board (3+3 voices <br>
+to 2 Audio Outputs)<br>
+Sound/Speech I-- Sound I + Speech I on a single board <br>
+(3+1 voices to 2 Audio Outputs)<br>
+<br>
+Note ...<br>
+Audio Output: This goes to a speaker or hi-fi amplifier Voice: a musical note,<br>
+sound effect, speech sound, etc. <br>
+<br>
+<br>
+Quite a few of the original MockingBoards were sold. Later MB's use model names<br>
+like "MockingBoard A", etc.. The main difference between the original series
+and<br>
+letter-named boards is wider availability of Speech.<br>
+<br>
+Edhel Iaur and Mike Mahon supplied details on models A-D. Prices are from a Sweet<br>
+Micro Systems ad in the December, 1985 issue of _A+_ magazine:<br>
+<br>
+MockingBoard A is a stereo music and sound synthesizer with six voices. Suggested<br>
+retail price is $99.00. This model has two sockets for adding speech synthesis<br>
+IC's so that a user could add speech to one or both Audio Outputs. Except for the<br>
+speech upgrade options, MB-A is very similar to the earlier Sound II. <br>
+<br>
+"MockingBoard B" is just the name of the Speech Upgrade; it is not a separate
+MB<br>
+board. The kit consists of one speech synthesizer chip. Earlier MB's used the<br>
+16-pin SC-01 speech IC, while later board runs provided 24-pin sockets for the<br>
+newer (but somewhat flawed) SSI-263 speech synthesizer chip. Suggested kit retail<br>
+price is $89.00. <br>
+<br>
+MockingBoard C is simply a MB-A that has been upgraded by plugging in one speech<br>
+chip. Suggested retail price is $179.00. (There was an 'undocumented' upgrade,<br>
+obtainable by plugging in the other speech chip, which allowed the board to "sing<br>
+harmony" with itself!) <br>
+<br>
+MockingBoard D is a stereo music, sound and speech synthesizer for the Apple IIc.<br>
+It connects to a IIc through a serial port and is, of course, external (unlike<br>
+the Slot board models for other Apple II's). Its drivers are very different from<br>
+the slot I/O of the other MockingBoards. Suggested retail price is $195.00.<br>
+<br>
+Phasor is a MockingBoard-compatible sound card produced by Applied Engineering.<br>
+Looking at the software that comes with the Phasor may be helpful to MB users.<br>
+Phasors may still be available from ABC Direct at 1-800-800-3680 for something<br>
+around $100. <br>
+<br>
+<br>
+MockingBoards work on Apple II's with at least 48K RAM. MB can go into any Slot<br>
+(except for MB-D, which must plug into a IIc). Most programs expect it to be in<br>
+Slot 4; however, it is fairly common for a program which supports MB to ask you<br>
+to enter the Slot #. <br>
+<br>
+Most for-MB products will work with Sound I, Sound II, Sound/Speech I, A, and C.<br>
+(Some work with D.) Products that use MB include Ultima III, IV, V Sky Fox, Wiley<br>
+Byte', Thunder Bombs, Lancaster, Under Fire, Music Construction Set,<br>
+GuitarMaster, and Music Star. <br>
+<br>
+MB's 0.5 Watt Audio Output(s) can directly drive an 8 Ohm speaker. You can also<br>
+run the Output(s) to a hi-fi amplifier. <br>
+<br>
+Except for speech-only models, MB uses the General Instruments AY-3-8910<br>
+Programmable Sound Generator IC. The PSG has 3 on-chip tone oscillators (via<br>
+channels A, B ,C) and a Noise Generator (NG). So, for example, the Sound II can<br>
+play up to 6 notes or effects at once. The NG on each PSG can be mixed with any,<br>
+all, or none of the three tones. <br>
+<br>
+<br>
+Many MB "Speech" version boards use the Votrax SC-01 Speech Synthesizer
+IC. The<br>
+SC-01 uses 64 phoneme sounds to produce speech. MB software lets you adjust<br>
+duration of each phoneme in 4 steps, create "rules" for custom sounds,
+and speak<br>
+sentences from text in BASIC programs. The<br>
+SSI-263 speech synthesizer appeared on later model MB's. (At present, more info<br>
+on the SSI-263 is not included here.) <br>
+<br>
+All MB versions use the 6522 Versatile Interface IC to handle board I/O. Except<br>
+for the Sound I board, early models have circuit board points to which you can<br>
+add cables to utilize I/O ports not needed for Sound or Speech.<br>
+<br>
+<b><br>
+Part 2: Sound Programming</b><br>
+<br>
+Each Programmable Sound Generator (PSG) has 3 output Channels: A, B, and C. There<br>
+are also 3 Tone oscillators, one committed to each Channel, and one Noise<br>
+Generator (NG) which can send its output to any Channel(s). Amplitude (output<br>
+Level or Volume) and Envelope Control ON/OFF is set for each Channel.<br>
+<br>
+The PSG's Enable/Disable register has 8 bits. Three bits let you decide whether<br>
+or not to send a Tone oscillator''s output to its Channel. For example, you can<br>
+enable Tone outputs for the oscillators going through Channels A and B while<br>
+disabling Tone output for the oscillator connected to Channel C.<br>
+<br>
+The Enable/Disable register also lets you decide whether or not to send the Noise<br>
+Generator's output through a Channel. Three bits let you decide which Channel(s)<br>
+the NG's output will go through. For example, you can enable NG output through<br>
+Channels A and C but not through B; or, disable NG output through all three<br>
+Channels, etc.. <br>
+<br>
+If, for example, Channel A's Tone oscillator output is enabled and NG output is<br>
+enabled for Channel A, then, a mixed Tone + NG signal will go through Channel A.<br>
+Setting Channel A's Amplitude controls the Level for the mixed signal.<br>
+<br>
+Often, a programmer will want to individually control the Levels of Tone outputs<br>
+(for music) and Noise outputs (for sound effects). This is accomplished by using<br>
+one PSG Channel only for Noise and two Channels only for Tones. Since the MB<br>
+Sound II has 2 PSG's, a typical game application using the board will have 4<br>
+music tones and 2 effects sounds-- each individually controlled for Level.<br>
+<br>
+More specifically, the user can set Tone Frequency (12 bits, 4 coarse &amp; 8 fine)<br>
+and Amplitude (4 bits) for each channel individually. A fifth Amplitude bit lets<br>
+you decide if a channel's Level will be "fixed" (use the Level value) or<br>
+"variable" (i.e. follow the current Envelope pattern). You have 4 bits
+to set<br>
+Noise Generator Frequency. <br>
+<br>
+Tone Freq = A2 Clock Freq/ [ (4096 x Coarse) + (16 x Fine) ] Noise Freq = A2<br>
+Clock Freq/ (16 x NG value) <br>
+<br>
+The Envelope of the combined outputs of enabled sources can be controlled for<br>
+Period (16 bits, 8 coarse &amp; 8 fine)** and, roughly, for Shape (4 bits).<br>
+<br>
+Env Freq = A2 Clock Freq/ [ (65536 x Coarse) + (256 x Fine) ] <br>
+<br>
+The registers of the PSG are described briefly below: <br>
+<br>
+Reg. Function &amp; Bit(s) used<br>
+<br>
+00 A Freq. fine (0-7)<br>
+01 A Freq. coarse (0-3)<br>
+02 B Freq. fine (0-7)<br>
+03 B Freq. coarse (0-3)<br>
+04 C Freq. fine (0-7)<br>
+05 C Freq. coarse (0-3)<br>
+06 NG Freq. (0-4)<br>
+07 Enable =0/ Disable =1<br>
+<br>
+NG on A (5) on B (4) on C (3)<br>
+Tone on A (2) on B (1) on C (0)<br>
+Ex: Writing $F0 to Reg 07 plays tones A, B, C plus noise on C <br>
+<br>
+08 A Level (0-3) and<br>
+Envelope Control (4): 1 = Use Env; 0 = Use Level value <br>
+<br>
+09 B Level (0-3) and ...<br>
+0A C Level (0-3) and ...<br>
+0B Envelope Period Fine (0-7)<br>
+0C Envelope Period Coarse (0-7)<br>
+0D Envelope Shape (four bits)<br>
+<br>
+Continue (3) 0= do 1 cycle and set Level to zero Attack (2) 1= count up 0= count<br>
+down<br>
+Alternate (1) 1= reverse count direction each cycle Hold (0) 1= do 1 cycle and<br>
+hold count<br>
+<br>
+<br>
+To program the MB you write to the board's 6522 I/O chip(s). All addresses<br>
+reference here are for a MB Sound II (2 Audio Outputs) in Slot 4. <br>
+<br>
+$C400 ORB1 function to perform, OUT 1<br>
+$C480 ORB2 function to perform, OUT 2<br>
+$C401 ORA1 data, OUT 1<br>
+$C481 ORA2 data, OUT 2<br>
+$C402 DDRB1 data direction, OUT 1<br>
+$C482 DDRB2 data direction, OUT 2<br>
+$C403 DDRA1 data direction, OUT 1<br>
+$C483 DDRA2 data direction, OUT 2<br>
+<br>
+Before sending music, etc. data to the MB you must Initialize the board's I/O. To<br>
+Initialize the 6522's: Store $FF at $C402 and the other three DDRxx addresses.<br>
+This needs to be done by your program just once. <br>
+<br>
+Your program gets access to a PSG via the 6522 by using a few basic Function<br>
+codes which set the PSG's I/O control lines: <br>
+<br>
+Set Inactive = $04 Set PSG Reg# = $07 Write Data = $06 Reset = $00 <br>
+<br>
+<br>
+To Write to a PSG register: Tell the PSG which Register you wish to access (i.e.<br>
+Set the "current register" #) and Write the data. This is easiest to do
+with<br>
+subroutines to handle the basic Functions. <br>
+<br>
+Example Subroutines (for Output Channel 1): <br>
+<br>
+Set Reg # 1000: A9 07 8D 00 C4 A9 04 8D 00 C4 60<br>
+<br>
+Write Data 100B: A9 06 8D 00 C4 A9 04 8D 00 C4 60 <br>
+<br>
+Notice that each Function sub ends by setting the PSG control lines to Inactive.<br>
+<br>
+Similarly, to do a Reset (set all PSG regs to zero) ... <br>
+<br>
+Reset 1016: A9 00 8D 00 C4 A9 04 8D 00 C4 60<br>
+<br>
+<br>
+To put the value $55 in PSG Register 02 (Channel B Freq. fine) .... <br>
+<br>
+1080: A9 02 put Reg# in A<br>
+1082: 8D 01 C4 store A at the Data address ORA1 1085: 20 00 10 JSR to Set Reg#<br>
+(sets "current register" to Register 2)<br>
+1088: A9 55 put the value $55 in A<br>
+108A: 8D 01 C4 store A at the Data address ORA1 108D: 20 0B 10 JSR to Write Data<br>
+($55 goes into PSG Register 2) 1090: 60 Exit from subroutine<br>
+<br>
+<br>
+As always, additions/corrections from; US-A2WUG, CSA2, 1WSW, GS WorlView and all
+other accessed readers are welcome.<br>
+<br>
+
+<hr>
+<br>
+<br>
+Send EMail, corrections, comments and questions to:<a href="mailto:rubywand@aol.com"><b>R/\/\/</b></a><p></p>
+
+
+<script src="MockingBoard%20Mini-Manual_files/ca-pub-1236478931755609.js"></script><script type="text/javascript"><!--
+google_ad_client = "pub-1236478931755609";
+/* 728x90, created 5/5/08 */
+google_ad_slot = "9828776355";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="MockingBoard%20Mini-Manual_files/show_ads.js">
+</script><ins id="aswift_0_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" width="728" height="90" frameborder="0"></iframe></ins></ins>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1236478931755609";
+/* 728x90, created 5/5/08 */
+google_ad_slot = "9828776355";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="MockingBoard%20Mini-Manual_files/show_ads.js">
+</script><ins id="aswift_1_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><ins id="aswift_1_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_1" name="aswift_1" style="left:0;position:absolute;top:0;" width="728" height="90" frameborder="0"></iframe></ins></ins>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1236478931755609";
+/* 728x90, created 5/5/08 */
+google_ad_slot = "9828776355";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="MockingBoard%20Mini-Manual_files/show_ads.js">
+</script><ins id="aswift_2_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><ins id="aswift_2_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_2" name="aswift_2" style="left:0;position:absolute;top:0;" width="728" height="90" frameborder="0"></iframe></ins></ins>
+
+
+</body></html>

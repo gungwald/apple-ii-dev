@@ -1,0 +1,299 @@
+ #!/bin/sh
+
+PACKAGE_VENDOR=gungwald
+PROGRAM_BASENAME=gsplus
+URL=http://apple2.gs/downloads/plusbuilds/0.14/gsplus-ubuntu-sdl.tar.bz2
+ROM_URL="ftp://ftp.apple.asimov.net/pub/apple_II/emulators/rom_images/gsrom03.zip"
+DOWNLOADED_FILE="$HOME"/Downloads/"$PROGRAM_BASENAME".tar.bz2
+DOWNLOADED_ROM="$HOME"/Downloads/gsrom03.zip
+SHARE_DIR=${XDG_DATA_HOME:-~/.local/share}
+ICON_URL=http://apple2.gs/plus/img/gsp_icon_webhead_256.png
+ICON_NAME="$PACKAGE_VENDOR"-"$PROGRAM_BASENAME"
+ICON_BASENAME="$ICON_NAME"-256x256.png
+DOWNLOADED_ICON="$HOME"/Downloads/"$ICON_BASENAME"
+GIT_URL=https://github.com/digarok/gsplus
+OS=$(uname -s)
+CPU=$(uname -p)
+ARCH_ID="$(uname -m)-$(uname -s)"
+INSTALLED_PROGRAM="$HOME"/.local/lib/"$ARCH_ID"/"$PROGRAM_BASENAME"
+INSTALLED_ROM="$SHARE_DIR"/firmware/apple-iigs-rom3.rom
+GSOS_DISK_URL="ftp://ftp.apple.asimov.net/pub/apple_II/images/gs/os/gsos/Apple_IIGS_System_6.0.4/Live.Install.po"
+GSOS_DISK=apple-iigs-gsos-6.0.4.po
+GSOS_INSTALLED_DISK="$HOME"/.local/var/"$GSOS_DISK"
+DROPBOX_DISK="$HOME"/Dropbox/var/apple2gs/gsos-system-6.0.4.po
+CONFIG_FILE=${XDG_CONFIG_HOME:-~/.config}/"$PROGRAM_BASENAME"/"$PROGRAM_BASENAME".conf
+USER_BIN_DIR="$HOME"/.local/bin
+START_SCRIPT="$USER_BIN_DIR"/"$PROGRAM_BASENAME"
+EXTRACT_DIR="$HOME"/Downloads
+
+isFedora()
+{
+    [ "$ID" = "fedora" ]
+}
+
+isRedHatEnterpriseLinux()
+{
+    [ "$ID" = "rhel" -o  "$ID" = "centos" ]
+}
+
+isRpmBased()
+{
+    [ "$ID" = "fedora" -o  "$ID" = "centos" -o "$ID" = "rhel" ]
+}
+
+isDebianBased()
+{
+    [ "$ID" = "debian" -o "$ID" = "ubuntu" ]
+}
+
+loadLinuxSelfIdentification()
+{
+    . /etc/os-release
+}
+
+isInstalled()
+{
+	OS=`uname -s`
+
+	if [ "$OS" = Darwin ]
+	then
+	    if which port
+	    then
+		if  port installed "$1"
+		then
+			return 0
+		fi
+	    elif which brew
+	    then
+		echo I don\'t know how to determine this for \"brew\". Fix me.
+	    else
+		echo I can\'t do it until you install \"port\" or \"brew\".
+	    fi
+	elif [ "$OS" = Linux ]
+	then
+	    loadLinuxSelfIdentification
+	    if isRpmBased
+	    then
+		    if rpm --query "$1"
+		    then
+			    return 0
+		    fi
+	    elif isDebianBased
+	    then
+		for package in "$@"
+		do
+		    if dpkg -s "$package" > /dev/null 2>&1; then
+			    return 0
+		    else
+			    return 1
+		    fi
+		done
+	    else
+		echo I don\'t know how to determine this for $ID. Fix me.
+	    fi
+	fi
+	return 1
+}
+
+installPackage()
+{
+	if isRpmBased
+	then
+		sudo dnf install -y "$1" || exit
+	elif isDebianBased
+	then
+		sudo apt install -y "$1" || exit
+	fi
+}
+
+ensurePackageIsInstalled()
+{
+	for PACKAGE in "$@"
+	do
+		if isInstalled "$PACKAGE"
+		then
+			echo $PACKAGE already installed
+		else
+			installPackage "$PACKAGE"
+		fi
+	done
+}
+
+checkDependencies() {
+	if isRpmBased
+	then
+		ensurePackageIsInstalled curl SDL2_image
+	elif isDebianBased
+	then
+		ensurePackageIsInstalled curl bzip2 libsdl2-image-2.0-0
+	else
+		echo Add packages for $OS $ID
+	fi
+}
+
+installGsplusExecutable() {
+	if [ ! -f "$INSTALLED_PROGRAM" ]; then
+	  mkdir -p "$(dirname "$INSTALLED_PROGRAM")"
+	  if [ "$OS" = Linux ] && [ "$CPU" != x86_64 ]; then
+	    # Need to build it
+	    # Pretty much only Debian supports non-x86_64 now.
+	    sudo apt install -y g++ libpcap-dev libfreetype6-dev libsdl2-dev \
+	      libsdl2-image-dev re2c libreadline-dev cmake || exit
+	    if [ ! -d "$HOME"/git/gsplus ]; then
+	      (
+		cd "$HOME"/git || exit
+		git clone "$GIT_URL" || exit
+		cd gsplus || exit
+		cat <<EOF >>CMakeLists.txt
+include_directories(include/SDL2)
+include_directories(include/freetype2)
+EOF
+	      )
+	    fi
+
+	    if [ ! -f build/bin/GSplus ]; then
+	      (
+		cd "$HOME"/git/gsplus || exit
+		mkdir -p build
+		cd build || exit
+		if [ ! -f Makefile ]; then
+		  cmake .. || exit
+		fi
+		make || exit
+	      )
+	    fi
+	    install "$HOME"/git/gsplus/build/bin/GSplus \
+	      "$INSTALLED_PROGRAM" || exit
+	  else
+	    if [ ! -f "$DOWNLOADED_FILE" ]; then
+	      curl --location -o "$DOWNLOADED_FILE" "$URL" || exit
+	    fi
+	    tar -xvjf "$DOWNLOADED_FILE" -C "$EXTRACT_DIR" \
+		    || (rm "$DOWNLOADED_FILE" && exit)
+	    install "$EXTRACT_DIR"/gsplus-ubuntu-sdl/gsplus \
+		    "$INSTALLED_PROGRAM" || exit
+	    rm -rf "$EXTRACT_DIR"/gsplus-ubuntu-sdl || exit
+	  fi
+	fi
+}
+
+installRom() {
+	if [ ! -f "$INSTALLED_ROM" ]; then
+	  if [ ! -f "$DOWNLOADED_ROM" ]; then
+	    curl --location -o "$DOWNLOADED_ROM" "$ROM_URL" || exit
+	  fi
+	  unzip "$DOWNLOADED_ROM" -d "$(dirname "$DOWNLOADED_ROM")" || exit
+	  mkdir -p "$(dirname "$INSTALLED_ROM")" || exit
+	  install "$(dirname "$DOWNLOADED_ROM")"/Rom03gd "$INSTALLED_ROM" || exit
+	  rm -rf "$(dirname "$DOWNLOADED_ROM")"/Rom03gd || exit
+	fi
+}
+
+#############################################################################
+#	Main Program
+#############################################################################
+loadLinuxSelfIdentification
+checkDependencies
+installGsplusExecutable
+installRom
+
+if [ ! -f "$DOWNLOADED_ICON" ]; then
+  curl --location -o "$DOWNLOADED_ICON" "$ICON_URL" || exit
+fi
+xdg-icon-resource install --size 256 "$DOWNLOADED_ICON" "$ICON_NAME" || exit
+
+if [ -f "$DROPBOX_DISK" ]; then
+  GSOS_INSTALLED_DISK="$DROPBOX_DISK"
+elif [ ! -f "$GSOS_INSTALLED_DISK" ]; then
+  mkdir -p "$(dirname "$GSOS_INSTALLED_DISK")" || exit
+  curl --location -o "$GSOS_INSTALLED_DISK" "$GSOS_DISK_URL" || exit
+fi
+
+PGM_BASENAME="$(basename "$0")"
+DESKTOP_TMP="$(mktemp --directory --tmpdir "$PGM_BASENAME".XXXXXXX.tmp)"/"$PACKAGE_VENDOR"-"$PROGRAM_BASENAME".desktop
+cat <<EOF >"$DESKTOP_TMP"
+[Desktop Entry]
+Name=GS+
+Exec=$START_SCRIPT
+Type=Application
+StartupNotify=true
+Terminal=false
+Comment=Apple IIgs Emulator
+Path=$HOME
+Categories=Emulator
+Encoding=UTF-8
+Icon=$ICON_NAME
+#
+# See here for a list of valid categories:
+# https://specifications.freedesktop.org/menu-spec/latest/apa.html
+EOF
+xdg-desktop-menu install "$DESKTOP_TMP" || exit
+#  update-desktop-database ~/.local/share/applications/ || exit
+rm "$DESKTOP_TMP" || exit
+rmdir "$(dirname "$DESKTOP_TMP")" || exit
+
+mkdir -p "$(dirname "$CONFIG_FILE")"
+cat <<EOF >"$CONFIG_FILE"
+# GSplus configuration file version 0.14
+
+s5d1 =
+s5d2 = 
+
+s6d1 =
+s6d2 = 
+
+s7d1 = $GSOS_INSTALLED_DISK
+s7d2 =
+s7d3 =
+s7d4 =
+s7d5 =
+s7d6 =
+
+g_invert_paddles = 1
+g_cfg_rom_path = $INSTALLED_ROM
+g_limit_speed = 3
+
+
+bram1[00] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[10] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[20] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[30] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[40] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[50] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[60] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[70] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[80] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[90] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[a0] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[b0] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[c0] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[d0] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[e0] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+bram1[f0] = 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+bram3[00] = 00 00 00 01 00 00 0d 06 02 01 01 00 01 00 00 00
+bram3[10] = 00 00 07 06 02 01 01 00 00 00 0f 06 06 00 05 06
+bram3[20] = 01 00 00 00 00 00 00 01 00 00 00 00 05 02 02 00
+bram3[30] = 00 00 2d 2d 00 00 00 00 00 00 02 02 02 06 08 00
+bram3[40] = 01 02 03 04 05 06 07 0a 00 01 02 03 04 05 06 07
+bram3[50] = 08 09 0a 0b 0c 0d 0e 0f 00 00 ff 12 ff ff ff 81
+bram3[60] = ff ff 01 ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[70] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[80] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[90] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[a0] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[b0] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[c0] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[d0] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[e0] = ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+bram3[f0] = ff ff ff ff ff ff ff ff ff ff ff ff d9 27 73 8d
+EOF
+
+mkdir -p "$USER_BIN_DIR"
+cat <<EOF >"$START_SCRIPT"
+#!/bin/sh
+exec "$INSTALLED_PROGRAM" -config "$CONFIG_FILE"
+EOF
+
+chmod a+x "$START_SCRIPT"
+

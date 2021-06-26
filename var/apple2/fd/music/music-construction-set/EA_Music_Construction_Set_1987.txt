@@ -1,0 +1,15 @@
+Will Harvey’s Music Construction Set
+from Electronic Arts
+
+This is the 1987 Version of the Music Construction Set (MCS). New features include support for the Mockingboard D and the possibility to select the printer interface.
+
+The copy protection of MCS has been well documented in different issues of Hardcore Computist. The softkey for this version was described in the Issue #32. 
+https://archive.org/stream/computist-scan-32/issue32#page/n11/mode/2up
+
+The original manual of this version was a very low cost variant with instructions for the Apple II, the Commodore 64 and the Atari 8 Bit Computers. Since the only screenshot in the manual was barely visible, I did not bother in scanning it. Instead I decided to remaster it in PDF format using the packaging as covers and omitted the instructions for other systems. 
+
+January 2015 - cybernesto
+
+
+
+

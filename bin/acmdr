@@ -1,0 +1,12 @@
+#!/bin/sh
+
+bindir=`dirname "$0"`
+
+if [ "$bindir" = '.' ]
+then
+	bindir=`pwd`
+fi
+
+libdir=`dirname "$bindir"`/lib
+
+exec java -jar "$libdir"/AppleCommander-1.3.5.14-ac.jar "$@"
