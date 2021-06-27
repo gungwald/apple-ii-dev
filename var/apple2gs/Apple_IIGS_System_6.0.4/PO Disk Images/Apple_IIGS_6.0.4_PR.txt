@@ -1,0 +1,65 @@
+What's new for System 6.0.4
+
+This is a summary of the visible changes since System 6.0.3 was released.
+
+Corrected File Auxtypes
+
+SCSI.Manager, Finder, Start, and all system sounds.
+
+OMF Files
+
+OMF records are packed, resulting in less disk space for most program files (worst case is no change in file size), an optimization last implemented in System 6.0.1.
+
+Control Panels
+
+Control Panel NDA handles daylight savings time following the USA standard effective year 2007.
+
+Each CDEV has an rVersion resource for consistency.
+
+Sound CDEV handles finderSaysOpenFailed events by playing the sound resource in the file.
+
+Slots CDEV supports ROM 4 "Mark Twain" hardware.
+
+File System Translators
+
+DOS 3.3, Pascal, and ProDOS FSTs corrected to use maximum pCount values.
+
+Pascal FST checks that the Volume Control Record is actually a Pascal Volume Control Record.
+
+Finder
+
+When opening resource sound files with only a single rSound and no application is assigned to that file type, the Finder sends a finderSaysOpenFailed event. This lets the Sound CDEV play the sound (if no other system extension handles it first). Most sound files in the System:Sound folder can be played by the Finder.
+
+File and volume sizes larger than one gigabyte, up to the maximum GS/OS allows, are properly displayed.
+
+FST names in Finder windows no longer display garbage if a third party unknown FST is installed and used. Instead, no information is displayed.
+
+Fonts and Sounds
+
+Additional fonts are available: 
+Courier 48, 56, 72, and 96
+Helvetica 56
+Symbol 9, 10, 12, 14, 18, 24, 36, 40, 48, 56, 72, 96
+Times 56
+
+Helvetica 96 and Times 96 have missing characters restored.
+
+Various Macintosh system sounds have been added.
+
+Installer
+
+Installer sets the System folder's auxtype during Easy Update to permanently enable magic routing in the Finder. This only works if the System folder is unlocked.
+
+New fonts and sounds can be installed through the Customize options "Fonts: All" and "Control Panel: Sounds" respectively.
+
+Line Edit Tool
+
+Line Edit control supports Control-A to jump to the start of the line and control-E to jump to the end of the line.
+
+ProDOS 8
+
+ProDOS 8 2.4.1 release from John Brooks is included.
+
+Window Manager Tool
+
+When JM Gothic is the System Font, the Window Manager uses JM Gothic instead of the hard-coded Shaston 8.

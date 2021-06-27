@@ -1,0 +1,17 @@
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D1.BXY) = 7b91696bed5a03c8a31b726b057d951b
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D2.BXY) = 61a636d5411f1dcb0d67248063e9d416
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D3.BXY) = 1f55bb52206acacc7ddcb9ba7ef79fbf
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D4.BXY) = 5d2819c73a7bd62f8297f33d231099fe
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D5.BXY) = 0c678475819d21faaaf86496c78c035b
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D6.BXY) = 29e47832e5a74c1630c2fd02445d204d
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D7.BXY) = 36e3043b8f9b0894c736ad81ef5c68f6
+MD5 (/Apple_IIGS_System_6.0.4/BXY/Sys6.0.4.D8.BXY) = 46282b0156cbe74417140eee603a61f2
+MD5 (/Apple_IIGS_System_6.0.4/Live.Install.po) = f748002f19b68f7a95da6635893c7842
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/Fonts.po) = 5d7be1a2cd9336bfc81ef97b801accbd
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/Fonts2.po) = e6a11d9774536a7da288ade49fc6f1ad
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/Install.po) = b3a8d0d43694ac4ad8081c4de5d3e909
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/synthLAB.po) = fa4f143dd899d0cc4c8ed9c9e41b7d37
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/System.Disk.po) = a2af21d0640abfc5f5919dce4299a104
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/SystemTools1.po) = 18982114924fb7cc6b748fc6405842c2
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/SystemTools2.po) = 369e7262af874be4920e92c070be3cf3
+MD5 (/Apple_IIGS_System_6.0.4/PO Disk Images/SystemTools3.po) = c41e6f5afe4b39b0c8fa7b23f333ed2f
