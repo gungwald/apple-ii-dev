@@ -1,0 +1,116 @@
+#!/bin/sh
+
+OS=$(uname -s)
+CPU=$(uname -p)
+
+isFedora()
+{
+    [ "$ID" = "fedora" ]
+}
+
+isRedHatEnterpriseLinux()
+{
+    [ "$ID" = "rhel" -o  "$ID" = "centos" ]
+}
+
+isRpmBased()
+{
+    [ "$ID" = "fedora" -o  "$ID" = "centos" -o "$ID" = "rhel" ]
+}
+
+isDebianBased()
+{
+    [ "$ID" = "debian" -o "$ID" = "ubuntu" ]
+}
+
+loadLinuxSelfIdentification()
+{
+    . /etc/os-release
+}
+
+isInstalled()
+{
+	OS=`uname -s`
+
+	if [ "$OS" = Darwin ]
+	then
+	    if which port
+	    then
+		if  port installed "$1"
+		then
+			return 0
+		fi
+	    elif which brew
+	    then
+		echo I don\'t know how to determine this for \"brew\". Fix me.
+	    else
+		echo I can\'t do it until you install \"port\" or \"brew\".
+	    fi
+	elif [ "$OS" = Linux ]
+	then
+	    loadLinuxSelfIdentification
+	    if isRpmBased
+	    then
+		    if rpm --query "$1"
+		    then
+			    return 0
+		    fi
+	    elif isDebianBased
+	    then
+		for package in "$@"
+		do
+		    if dpkg -s "$package" > /dev/null 2>&1; then
+			    return 0
+		    else
+			    return 1
+		    fi
+		done
+	    else
+		echo I don\'t know how to determine this for $ID. Fix me.
+	    fi
+	fi
+	return 1
+}
+
+installPackage()
+{
+	if isRpmBased
+	then
+		sudo dnf install -y "$1" || exit
+	elif isDebianBased
+	then
+		sudo apt install -y "$1" || exit
+	fi
+}
+
+ensurePackageIsInstalled()
+{
+	for PACKAGE in "$@"
+	do
+		if isInstalled "$PACKAGE"
+		then
+			echo $PACKAGE already installed
+		else
+			installPackage "$PACKAGE"
+		fi
+	done
+}
+
+checkDependencies() 
+{
+	if isRpmBased
+	then
+		ensurePackageIsInstalled wine
+	elif isDebianBased
+	then
+		ensurePackageIsInstalled wine
+	else
+		echo Add packages for $OS $ID
+	fi
+}
+
+loadLinuxSelfIdentification
+checkDependencies
+
+cp applewin.desktop ~/.local/share/applications
+
