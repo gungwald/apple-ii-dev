@@ -103,7 +103,7 @@ checkDependencies()
 		ensurePackageIsInstalled wine
 	elif isDebianBased
 	then
-		ensurePackageIsInstalled wine
+		ensurePackageIsInstalled wine-stable
 	else
 		echo Add packages for $OS $ID
 	fi
