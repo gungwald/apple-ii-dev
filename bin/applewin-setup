@@ -109,8 +109,15 @@ checkDependencies()
 	fi
 }
 
+installApplewin()
+{
+	URL="https://github.com/AppleWin/AppleWin/releases/download/v1.30.3.0/AppleWin1.30.3.0.zip"
+	curl -O "$URL"
+}
+
 loadLinuxSelfIdentification
 checkDependencies
+installApplewin
 
 cp applewin.desktop ~/.local/share/applications
 
