@@ -1,0 +1,11 @@
+ProDOS/BASIC Bin Directory
+Implement BASIC.SYSTEM extension
+Find /boot/bin directory using current PREFIX
+If /boot/bin does not exist then, write "No bin directory found"
+Read names of all files in /boot/bin
+Sort the file names so that they can be searched with a binary search
+On each invocation:
+	Search the file name list for the command provided
+	If it exists, invoke that file: text, bin, sys, bas
+	If it does not exist, allow BASIC to continue
+
