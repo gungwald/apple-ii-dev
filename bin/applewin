@@ -25,7 +25,8 @@ do
             echo Starting $APPLEWIN...
             if isRunningOnWindows
             then
-                if "$APPLEWIN" "$@"
+                VERT_RES=`wmic path Win32_VideoController get CurrentVerticalResolution | grep --only-matching '^[[:digit:]]\+'`
+                if "$APPLEWIN" -fs-height=best -no-full-screen
                 then
                     echo success > "$STATUS_FILE"
                 fi
