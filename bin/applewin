@@ -1,5 +1,11 @@
 #!/bin/sh
 
+isRunningOnWindows()
+{
+    OS=$(uname -s)
+    [ ${OS:0:7} = "MINGW32" ]
+}
+
 #RAMWORKS_8MB='-R 127'
 TARGET=applewin.exe
 FOUND=false
@@ -9,23 +15,31 @@ unset APPLEWIN
 
 echo in_progress > "$STATUS_FILE"
 
-for SEARCH_DIR in "$HOME"/Dropbox/opt "$HOME"/.wine/drive_c/opt
+for SEARCH_DIR in "$HOME"/Dropbox/opt "$HOME"/opt "$HOME"/.wine/drive_c/opt
 do
     if [ -d "$SEARCH_DIR" ]
     then
-        find "$SEARCH_DIR" -iname "$TARGET" -print | sort -r | while read APPLEWIN
-		do
-		    echo Starting $APPLEWIN...
-		    if wine "$APPLEWIN" $RAMWORKS_8MB "$@"
-		    then
-			echo success > "$STATUS_FILE"
-		    fi
+        find "$SEARCH_DIR" -iname "$TARGET" -print \
+            | sort -r | while read APPLEWIN
+        do
+            echo Starting $APPLEWIN...
+            if isRunningOnWindows
+            then
+                if "$APPLEWIN" "$@"
+                then
+                    echo success > "$STATUS_FILE"
+                fi
+            else
+                if wine "$APPLEWIN" $RAMWORKS_8MB "$@"
+                then
+                    echo success > "$STATUS_FILE"
+                fi
+            fi
 
-		    # Breaks out of the inner "while" loop,
-		    # but not the outer "for" loop
-		    break
-		done
-	
+            # Breaks out of the inner "while" loop,
+            # but not the outer "for" loop
+            break
+        done
     else
         echo Search directory not found or not a directory: $SEARCH_DIR
     fi

@@ -98,26 +98,38 @@ ensurePackageIsInstalled()
 
 checkDependencies() 
 {
-	if isRpmBased
-	then
-		ensurePackageIsInstalled wine
-	elif isDebianBased
-	then
-		ensurePackageIsInstalled wine-stable
-	else
-		echo Add packages for $OS $ID
-	fi
+    if isRpmBased
+    then
+        ensurePackageIsInstalled wine
+    elif isDebianBased
+    then
+        ensurePackageIsInstalled wine-stable
+    else
+        echo Add packages for $OS $ID
+    fi
 }
 
 installApplewin()
 {
-	URL="https://github.com/AppleWin/AppleWin/releases/download/v1.30.3.0/AppleWin1.30.3.0.zip"
-	curl -O "$URL"
+    INSTALL_DIR="$HOME/opt/applewin"
+    APP_ZIP="AppleWin1.30.3.0.zip"
+    DOWNLOADED_ZIP="$HOME/Downloads/$APP_ZIP"
+    URL="https://github.com/AppleWin/AppleWin/releases/download/v1.30.3.0/$APP_ZIP"
+    curl --location -o "$DOWNLOADED_ZIP" "$URL" || exit
+    mkdir -p "$INSTALL_DIR" || exit
+    unzip "$DOWNLOADED_ZIP" -d "$INSTALL_DIR" || exit
 }
 
-loadLinuxSelfIdentification
-checkDependencies
+################
+#              #
+# Main Program #
+#              #
+################
+if [ "$(uname -s)" = "Linux" ]
+then
+    loadLinuxSelfIdentification
+    checkDependencies
+    cp applewin.desktop ~/.local/share/applications
+fi
 installApplewin
-
-cp applewin.desktop ~/.local/share/applications
 
