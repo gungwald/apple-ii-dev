@@ -3,11 +3,13 @@
 PACKAGE_VENDOR=gungwald
 PROGRAM_BASENAME=gsplus
 URL=http://apple2.gs/downloads/plusbuilds/0.14/gsplus-ubuntu-sdl.tar.bz2
+URL=https://github.com/digarok/gsplus/releases/download/v0.14/gsplus-ubuntu-sdl.tar.bz2
 ROM_URL="ftp://ftp.apple.asimov.net/pub/apple_II/emulators/rom_images/gsrom03.zip"
 DOWNLOADED_FILE="$HOME"/Downloads/"$PROGRAM_BASENAME".tar.bz2
 DOWNLOADED_ROM="$HOME"/Downloads/gsrom03.zip
 SHARE_DIR=${XDG_DATA_HOME:-~/.local/share}
 ICON_URL=http://apple2.gs/plus/img/gsp_icon_webhead_256.png
+ICON_URL=https://raw.githubusercontent.com/digarok/gsplus/v0.14/assets/gsp_icon_256.png
 ICON_NAME="$PACKAGE_VENDOR"-"$PROGRAM_BASENAME"
 ICON_BASENAME="$ICON_NAME"-256x256.png
 DOWNLOADED_ICON="$HOME"/Downloads/"$ICON_BASENAME"
