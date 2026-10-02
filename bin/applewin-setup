@@ -112,9 +112,9 @@ checkDependencies()
 installApplewin()
 {
     INSTALL_DIR="$HOME/opt/applewin"
-    APP_ZIP="AppleWin1.30.3.0.zip"
+    APP_ZIP="AppleWin1.32.0.0.zip"
     DOWNLOADED_ZIP="$HOME/Downloads/$APP_ZIP"
-    URL="https://github.com/AppleWin/AppleWin/releases/download/v1.30.3.0/$APP_ZIP"
+    URL="https://github.com/AppleWin/AppleWin/releases/download/v1.32.0.0/$APP_ZIP"
     curl --location -o "$DOWNLOADED_ZIP" "$URL" || exit
     mkdir -p "$INSTALL_DIR" || exit
     unzip "$DOWNLOADED_ZIP" -d "$INSTALL_DIR" || exit
